@@ -1,0 +1,60 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+
+const prosjekter = (await getCollection("forskning")).sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+);
+
+const statusOrder: Record<string, number> = {
+  pågående: 0,
+  planlagt: 1,
+  avsluttet: 2,
+};
+prosjekter.sort(
+  (a, b) => statusOrder[a.data.status] - statusOrder[b.data.status],
+);
+---
+
+<BaseLayout
+  title="Forskning"
+  description="Pågående og planlagte forskningsprosjekter ved biomekatronisk forskningsgruppe, NTNU Ålesund."
+>
+  <div class="mx-auto max-w-5xl px-5 py-12">
+    <header class="max-w-prose mb-10">
+      <h1 class="text-3xl sm:text-4xl font-bold mb-3">Forskning</h1>
+      <p class="text-lg text-ink-muted dark:text-paper/80">
+        Jeg leder biomekatronisk forskningsgruppe ved NTNU Ålesund. Vi
+        jobber i skjæringspunktet mellom industrirobotikk, computer vision,
+        og sim-to-real-overføring — med norsk produksjonsindustri som
+        målgruppe.
+      </p>
+    </header>
+
+    {prosjekter.length === 0 ? (
+      <p class="text-ink-muted dark:text-paper/70">
+        Ingen prosjekter registrert ennå.
+      </p>
+    ) : (
+      <ul class="space-y-6">
+        {prosjekter.map((p) => (
+          <li class="border border-ink/10 dark:border-paper/15 rounded-lg p-5">
+            <div class="flex flex-wrap items-baseline justify-between gap-2 mb-2">
+              <h2 class="text-xl font-semibold">
+                <a href={`/forskning/${p.slug}`} class="no-underline hover:underline">
+                  {p.data.title}
+                </a>
+              </h2>
+              <span class="text-sm uppercase tracking-wide text-accent dark:text-accent-dark">
+                {p.data.status}
+              </span>
+            </div>
+            <p class="text-ink-muted dark:text-paper/80">
+              {p.data.description}
+            </p>
+          </li>
+        ))}
+      </ul>
+    )}
+  </div>
+</BaseLayout>

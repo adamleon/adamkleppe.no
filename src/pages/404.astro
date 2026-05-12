@@ -1,0 +1,27 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+
+<BaseLayout
+  title="404 — Siden finnes ikke"
+  description="Siden du leter etter er ikke her. Sannsynligvis et tastfeil, eller en lenke som har rustet."
+>
+  <div class="mx-auto max-w-prose px-5 py-24 text-center">
+    <p class="font-mono text-sm uppercase tracking-widest text-accent dark:text-accent-dark mb-4">
+      404 · denne ruten finnes ikke i kinematikken
+    </p>
+    <h1 class="text-4xl sm:text-5xl font-serif font-bold mb-4">
+      Roboten gikk i veggen.
+    </h1>
+    <p class="text-lg text-ink-muted dark:text-paper/80 mb-8">
+      Siden du leter etter er ikke her. Sannsynligvis en lenke som har rustet
+      — eller et komma der det skulle stått en skråstrek.
+    </p>
+    <a
+      href="/"
+      class="inline-block no-underline font-medium border-b-2 border-accent dark:border-accent-dark pb-1 hover:border-b-4"
+    >
+      Tilbake til forsiden →
+    </a>
+  </div>
+</BaseLayout>

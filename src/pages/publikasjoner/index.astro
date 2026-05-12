@@ -1,0 +1,58 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import PublicationItem from "../../components/PublicationItem.astro";
+
+const alle = (await getCollection("publikasjoner")).sort(
+  (a, b) => b.data.år - a.data.år,
+);
+
+const grupperteEtterÅr = alle.reduce<Record<number, typeof alle>>((acc, p) => {
+  (acc[p.data.år] ??= []).push(p);
+  return acc;
+}, {});
+
+const år = Object.keys(grupperteEtterÅr)
+  .map(Number)
+  .sort((a, b) => b - a);
+---
+
+<BaseLayout
+  title="Publikasjoner"
+  description="Vitenskapelige publikasjoner av Adam Leon Kleppe."
+>
+  <div class="mx-auto max-w-prose px-5 py-12">
+    <header class="mb-10">
+      <h1 class="text-3xl sm:text-4xl font-bold mb-3">Publikasjoner</h1>
+      <p class="text-ink-muted dark:text-paper/80">
+        Liste over fagfellevurderte artikler, konferansebidrag og bokkapitler.
+        Listen vedlikeholdes manuelt i v1 — en automatisk integrasjon mot
+        NVA-API er planlagt for v2.
+      </p>
+    </header>
+
+    {år.length === 0 ? (
+      <p class="text-ink-muted dark:text-paper/70">
+        Ingen publikasjoner registrert.
+      </p>
+    ) : (
+      år.map((y) => (
+        <section class="mb-10">
+          <h2 class="font-serif text-xl font-bold mb-3">{y}</h2>
+          <ul>
+            {grupperteEtterÅr[y].map((p) => (
+              <PublicationItem
+                title={p.data.title}
+                forfattere={p.data.forfattere}
+                år={p.data.år}
+                publisert_i={p.data.publisert_i}
+                doi={p.data.doi}
+                url={p.data.url}
+              />
+            ))}
+          </ul>
+        </section>
+      ))
+    )}
+  </div>
+</BaseLayout>

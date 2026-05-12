@@ -1,0 +1,58 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+
+const alle = (await getCollection("formidling")).sort(
+  (a, b) => b.data.dato.valueOf() - a.data.dato.valueOf(),
+);
+---
+
+<BaseLayout
+  title="Formidling"
+  description="Medieoppslag, foredrag, podcaster og populærvitenskapelig arbeid."
+>
+  <div class="mx-auto max-w-prose px-5 py-12">
+    <header class="mb-10">
+      <h1 class="text-3xl sm:text-4xl font-bold mb-3">Formidling</h1>
+      <p class="text-ink-muted dark:text-paper/80">
+        Tidligere medvirkning inkluderer blant annet
+        <em>NRK Pønsj</em> og <em>Historier som endret verden</em>. Som
+        fagansvarlig for mekatronikk i Store norske leksikon skriver og
+        kvalitetssikrer jeg artikler om feltet.
+      </p>
+    </header>
+
+    {alle.length === 0 ? (
+      <p class="text-ink-muted dark:text-paper/70">
+        Ingen oppslag registrert ennå.
+      </p>
+    ) : (
+      <ul class="space-y-4">
+        {alle.map((f) => (
+          <li class="border-b border-ink/10 dark:border-paper/10 pb-4">
+            <div class="flex flex-wrap items-baseline justify-between gap-2">
+              <h2 class="text-lg font-semibold">
+                {f.data.url ? (
+                  <a href={f.data.url}>{f.data.title}</a>
+                ) : (
+                  f.data.title
+                )}
+              </h2>
+              <span class="text-xs uppercase tracking-wide text-accent dark:text-accent-dark">
+                {f.data.type}
+              </span>
+            </div>
+            <p class="text-sm text-ink-muted dark:text-paper/70">
+              {f.data.kanal} · {f.data.dato.toLocaleDateString("nb-NO", {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              })}
+            </p>
+            <p class="mt-1">{f.data.description}</p>
+          </li>
+        ))}
+      </ul>
+    )}
+  </div>
+</BaseLayout>

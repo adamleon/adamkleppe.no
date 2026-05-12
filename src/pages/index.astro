@@ -1,0 +1,169 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Card from "../components/Card.astro";
+import PublicationItem from "../components/PublicationItem.astro";
+
+const sisteInnlegg = (await getCollection("skriv", ({ data }) => !data.draft))
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .slice(0, 3);
+
+const sistePublikasjoner = (await getCollection("publikasjoner"))
+  .sort((a, b) => b.data.år - a.data.år)
+  .slice(0, 3);
+---
+
+<BaseLayout
+  title="Adam Leon Kleppe"
+  description="Førsteamanuensis ved NTNU Ålesund. Industrirobotikk, sim-to-real og computer vision i norsk produksjon."
+>
+  <section class="border-b border-ink/10 dark:border-paper/10">
+    <div class="mx-auto max-w-5xl px-5 py-16 sm:py-24 grid gap-10 sm:grid-cols-[2fr_1fr] items-start">
+      <div>
+        <p class="text-sm uppercase tracking-widest text-accent dark:text-accent-dark mb-3">
+          Førsteamanuensis · NTNU Ålesund
+        </p>
+        <h1 class="text-4xl sm:text-5xl font-bold leading-tight mb-5">
+          Adam Leon Kleppe
+        </h1>
+        <p class="text-xl text-ink-muted dark:text-paper/80 leading-relaxed">
+          Industrirobotikk i praksis — sim-to-real og computer vision
+          i norsk produksjon.
+        </p>
+      </div>
+      <div
+        class="aspect-[4/5] bg-ink/5 dark:bg-paper/10 rounded-lg flex items-center justify-center text-sm text-ink-muted dark:text-paper/60"
+        aria-label="Plassholder for portrettbilde"
+      >
+        <!-- PLACEHOLDER: Erstatt med ekte portrettbilde i /public/portrett.jpg -->
+        TODO: portrettbilde
+      </div>
+    </div>
+  </section>
+
+  <section class="border-b border-ink/10 dark:border-paper/10 bg-ink/[0.02] dark:bg-paper/[0.03]">
+    <div class="mx-auto max-w-5xl px-5 py-16">
+      <div class="grid gap-10 sm:grid-cols-[1fr_2fr] items-start">
+        <div class="space-y-2">
+          <p class="text-sm uppercase tracking-widest text-accent dark:text-accent-dark">
+            Under arbeid
+          </p>
+          <p class="font-serif text-sm text-ink-muted dark:text-paper/70">
+            Planlagt utgivelse 2027–2028
+          </p>
+        </div>
+        <div>
+          <h2 class="font-serif text-3xl sm:text-4xl font-bold mb-4">
+            Den Rødrutede Robotboken
+          </h2>
+          <p class="text-lg leading-relaxed mb-6">
+            En bok om industrirobotikk skrevet på norsk, for norske
+            ingeniørstudenter og praktikere. Boken samler det jeg har lært
+            gjennom snart et tiår med undervisning og forskning på robotikk,
+            sim-to-real-overføring, og computer vision i produksjon.
+          </p>
+          <a
+            href="/boka"
+            class="inline-block no-underline font-medium border-b-2 border-accent dark:border-accent-dark pb-1 hover:border-b-4"
+          >
+            Les mer om boka →
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="border-b border-ink/10 dark:border-paper/10">
+    <div class="mx-auto max-w-5xl px-5 py-16">
+      <h2 class="font-serif text-2xl font-bold mb-6">Tre spor</h2>
+      <div class="grid gap-4 sm:grid-cols-3">
+        <Card
+          href="/forskning"
+          title="Forskning"
+          description="Biomekatronisk forskningsgruppe ved NTNU Ålesund. Sim-to-real, computer vision, geometrisk algebra."
+        />
+        <Card
+          href="/undervisning"
+          title="Undervisning"
+          description="Emner, ressurser, og åpne student­oppgaver på bachelor- og masternivå."
+        />
+        <Card
+          href="/formidling"
+          title="Formidling"
+          description="Fagansvarlig mekatronikk i Store norske leksikon. Foredrag, medieoppslag, podcaster."
+        />
+      </div>
+    </div>
+  </section>
+
+  <section class="border-b border-ink/10 dark:border-paper/10">
+    <div class="mx-auto max-w-5xl px-5 py-16 grid gap-12 sm:grid-cols-2">
+      <div>
+        <div class="flex items-baseline justify-between mb-4">
+          <h2 class="font-serif text-2xl font-bold">Siste skriv</h2>
+          <a href="/skriv" class="text-sm">Alle innlegg →</a>
+        </div>
+        {sisteInnlegg.length === 0 ? (
+          <p class="text-ink-muted dark:text-paper/70 text-sm">
+            Ingen innlegg ennå.
+          </p>
+        ) : (
+          <ul class="space-y-3">
+            {sisteInnlegg.map((post) => (
+              <li>
+                <a href={`/skriv/${post.slug}`} class="font-medium">
+                  {post.data.title}
+                </a>
+                <p class="text-sm text-ink-muted dark:text-paper/70">
+                  {post.data.pubDate.toLocaleDateString("nb-NO", {
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                  })}
+                </p>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+
+      <div>
+        <div class="flex items-baseline justify-between mb-4">
+          <h2 class="font-serif text-2xl font-bold">Siste publikasjoner</h2>
+          <a href="/publikasjoner" class="text-sm">Alle →</a>
+        </div>
+        {sistePublikasjoner.length === 0 ? (
+          <p class="text-ink-muted dark:text-paper/70 text-sm">
+            Ingen publikasjoner registrert.
+          </p>
+        ) : (
+          <ul>
+            {sistePublikasjoner.map((p) => (
+              <PublicationItem
+                title={p.data.title}
+                forfattere={p.data.forfattere}
+                år={p.data.år}
+                publisert_i={p.data.publisert_i}
+                doi={p.data.doi}
+                url={p.data.url}
+              />
+            ))}
+          </ul>
+        )}
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="mx-auto max-w-5xl px-5 py-12">
+      <h2 class="font-serif text-2xl font-bold mb-3">Kontakt</h2>
+      <p class="text-ink-muted dark:text-paper/80">
+        E-post: <span class="font-mono">TODO: e-post</span>
+        <!-- TODO: Sett inn e-post i klartekst her og i SiteFooter. -->
+      </p>
+      <p class="text-ink-muted dark:text-paper/80 mt-1">
+        NTNU Ålesund, Larsgårdsvegen 2, 6009 Ålesund.
+      </p>
+    </div>
+  </section>
+</BaseLayout>

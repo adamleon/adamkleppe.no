@@ -1,0 +1,49 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+
+const innlegg = (
+  await getCollection("skriv", ({ data }) => !data.draft)
+).sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+---
+
+<BaseLayout
+  title="Skriv"
+  description="Essays og notater om robotikk, sim-to-real, undervisning og fagspråk."
+>
+  <div class="mx-auto max-w-prose px-5 py-12">
+    <header class="mb-10">
+      <h1 class="text-3xl sm:text-4xl font-bold mb-3">Skriv</h1>
+      <p class="text-ink-muted dark:text-paper/80">
+        Essays og notater. Abonner via
+        <a href="/rss-skriv.xml">RSS</a>.
+      </p>
+    </header>
+
+    {innlegg.length === 0 ? (
+      <p class="text-ink-muted dark:text-paper/70">
+        Ingen innlegg publisert ennå.
+      </p>
+    ) : (
+      <ul class="space-y-6">
+        {innlegg.map((p) => (
+          <li>
+            <h2 class="text-xl font-semibold">
+              <a href={`/skriv/${p.slug}`} class="no-underline hover:underline">
+                {p.data.title}
+              </a>
+            </h2>
+            <p class="text-sm text-ink-muted dark:text-paper/70 mb-1">
+              {p.data.pubDate.toLocaleDateString("nb-NO", {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              })}
+            </p>
+            <p>{p.data.description}</p>
+          </li>
+        ))}
+      </ul>
+    )}
+  </div>
+</BaseLayout>

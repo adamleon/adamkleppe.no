@@ -1,0 +1,41 @@
+---
+import { getCollection, type CollectionEntry } from "astro:content";
+import ProseLayout from "../../layouts/ProseLayout.astro";
+
+export async function getStaticPaths() {
+  const entries = await getCollection("skriv", ({ data }) => !data.draft);
+  return entries.map((entry) => ({
+    params: { slug: entry.slug },
+    props: { entry },
+  }));
+}
+
+interface Props {
+  entry: CollectionEntry<"skriv">;
+}
+
+const { entry } = Astro.props;
+const { Content } = await entry.render();
+
+const dato = entry.data.pubDate.toLocaleDateString("nb-NO", {
+  year: "numeric",
+  month: "long",
+  day: "numeric",
+});
+---
+
+<ProseLayout
+  title={entry.data.title}
+  description={entry.data.description}
+  heading={entry.data.title}
+  lead={entry.data.description}
+  ogType="article"
+>
+  <p class="not-prose text-sm text-ink-muted dark:text-paper/70 mb-6">
+    <time datetime={entry.data.pubDate.toISOString()}>{dato}</time>
+    {entry.data.tags.length > 0 && (
+      <> · {entry.data.tags.join(", ")}</>
+    )}
+  </p>
+  <Content />
+</ProseLayout>

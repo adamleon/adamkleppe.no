@@ -1,0 +1,36 @@
+---
+import { getCollection, type CollectionEntry } from "astro:content";
+import ProseLayout from "../../layouts/ProseLayout.astro";
+
+export async function getStaticPaths() {
+  const entries = await getCollection("undervisning");
+  return entries.map((entry) => ({
+    params: { slug: entry.slug },
+    props: { entry },
+  }));
+}
+
+interface Props {
+  entry: CollectionEntry<"undervisning">;
+}
+
+const { entry } = Astro.props;
+const { Content } = await entry.render();
+---
+
+<ProseLayout
+  title={entry.data.title}
+  description={entry.data.description}
+  heading={entry.data.title}
+  lead={entry.data.description}
+  ogType="article"
+>
+  <p class="not-prose text-sm uppercase tracking-wide text-ink-muted dark:text-paper/70 mb-6">
+    {entry.data.kind}
+    {entry.data.nivå && <> · {entry.data.nivå}</>}
+    {entry.data.status && (
+      <span class="text-accent dark:text-accent-dark"> · {entry.data.status}</span>
+    )}
+  </p>
+  <Content />
+</ProseLayout>
