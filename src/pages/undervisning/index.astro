@@ -2,69 +2,124 @@
 import { getCollection } from "astro:content";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 
-const alle = (await getCollection("undervisning")).sort(
-  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
-);
+const alle = await getCollection("undervisning");
 
-const emner = alle.filter((e) => e.data.kind === "emne");
-const oppgaver = alle.filter((e) => e.data.kind === "studentoppgave");
-const ressurser = alle.filter((e) => e.data.kind === "ressurs");
+const emner = alle
+  .filter((e) => e.data.kind === "emne")
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+
+const ressurser = alle
+  .filter((e) => e.data.kind === "ressurs")
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+
+const oppgaver = alle
+  .filter((e) => e.data.kind === "studentoppgave")
+  .sort((a, b) => {
+    const ya = a.data.år ?? a.data.pubDate.getFullYear();
+    const yb = b.data.år ?? b.data.pubDate.getFullYear();
+    return yb - ya;
+  });
 ---
 
 <BaseLayout
   title="Undervisning"
-  description="Emner jeg underviser i, åpne studentoppgaver, og pedagogiske ressurser."
+  description="Emner jeg underviser i, veiledede studentoppgaver, og pedagogiske ressurser."
 >
   <div class="mx-auto max-w-5xl px-5 py-12">
     <header class="max-w-prose mb-10">
       <h1 class="text-3xl sm:text-4xl font-bold mb-3">Undervisning</h1>
       <p class="text-lg text-ink-muted dark:text-paper/80">
-        Emner, åpne studentoppgaver, og pedagogiske ressurser. Studenter kan
-        abonnere på <a href="/rss-undervisning.xml">RSS-feeden</a> for å få
-        beskjed når nye oppgaver legges ut.
+        Emner jeg underviser i, pedagogiske ressurser, og en oversikt over
+        studentoppgaver jeg har veiledet. Studenter kan abonnere på
+        <a href="/rss-undervisning.xml">RSS-feeden</a> for å få beskjed når
+        nye oppgaver legges ut.
       </p>
     </header>
 
-    {[
-      { tittel: "Emner", liste: emner, tom: "Ingen emner registrert." },
-      { tittel: "Åpne studentoppgaver", liste: oppgaver, tom: "Ingen åpne oppgaver akkurat nå." },
-      { tittel: "Ressurser", liste: ressurser, tom: "Ingen ressurser ennå." },
-    ].map((seksjon) => (
-      <section class="mb-12">
-        <h2 class="font-serif text-2xl font-bold mb-4">{seksjon.tittel}</h2>
-        {seksjon.liste.length === 0 ? (
-          <p class="text-ink-muted dark:text-paper/70">{seksjon.tom}</p>
-        ) : (
-          <ul class="space-y-4">
-            {seksjon.liste.map((e) => (
-              <li class="border border-ink/10 dark:border-paper/15 rounded-lg p-4">
-                <div class="flex flex-wrap items-baseline justify-between gap-2">
-                  <h3 class="text-lg font-semibold">
-                    <a href={`/undervisning/${e.slug}`} class="no-underline hover:underline">
-                      {e.data.title}
-                    </a>
-                  </h3>
-                  <div class="flex gap-2 text-xs uppercase tracking-wide">
-                    {e.data.nivå && (
-                      <span class="text-ink-muted dark:text-paper/70">
-                        {e.data.nivå}
-                      </span>
-                    )}
-                    {e.data.status && (
-                      <span class="text-accent dark:text-accent-dark">
-                        {e.data.status}
-                      </span>
-                    )}
-                  </div>
-                </div>
+    <section class="mb-12">
+      <h2 class="font-serif text-2xl font-bold mb-4">Emner</h2>
+      {emner.length === 0 ? (
+        <p class="text-ink-muted dark:text-paper/70">
+          Ingen emner registrert.
+        </p>
+      ) : (
+        <ul class="space-y-4">
+          {emner.map((e) => (
+            <li class="border border-ink/10 dark:border-paper/15 rounded-lg p-4">
+              <h3 class="text-lg font-semibold">
+                <a href={`/undervisning/${e.slug}`} class="no-underline hover:underline">
+                  {e.data.title}
+                </a>
+              </h3>
+              {e.data.description && (
                 <p class="text-sm text-ink-muted dark:text-paper/80 mt-1">
                   {e.data.description}
                 </p>
-              </li>
-            ))}
-          </ul>
-        )}
-      </section>
-    ))}
+              )}
+            </li>
+          ))}
+        </ul>
+      )}
+    </section>
+
+    <section class="mb-12">
+      <h2 class="font-serif text-2xl font-bold mb-4">Veiledede studentoppgaver</h2>
+      {oppgaver.length === 0 ? (
+        <p class="text-ink-muted dark:text-paper/70">
+          Ingen oppgaver registrert ennå.
+        </p>
+      ) : (
+        <ul class="divide-y divide-ink/10 dark:divide-paper/10 border-y border-ink/10 dark:border-paper/10">
+          {oppgaver.map((e) => (
+            <li class="py-4">
+              <div class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+                <h3 class="text-base font-medium">
+                  {e.data.url ? (
+                    <a href={e.data.url} rel="external">{e.data.title}</a>
+                  ) : (
+                    e.data.title
+                  )}
+                </h3>
+                <div class="flex gap-3 text-xs uppercase tracking-wide text-ink-muted dark:text-paper/60 shrink-0">
+                  {e.data.nivå && <span>{e.data.nivå}</span>}
+                  {e.data.år && <span>{e.data.år}</span>}
+                </div>
+              </div>
+              {e.data.student && e.data.student.length > 0 && (
+                <p class="text-sm text-ink-muted dark:text-paper/70 mt-0.5">
+                  {e.data.student.join(", ")}
+                </p>
+              )}
+            </li>
+          ))}
+        </ul>
+      )}
+    </section>
+
+    <section class="mb-12">
+      <h2 class="font-serif text-2xl font-bold mb-4">Ressurser</h2>
+      {ressurser.length === 0 ? (
+        <p class="text-ink-muted dark:text-paper/70">
+          Ingen ressurser ennå.
+        </p>
+      ) : (
+        <ul class="space-y-4">
+          {ressurser.map((e) => (
+            <li class="border border-ink/10 dark:border-paper/15 rounded-lg p-4">
+              <h3 class="text-lg font-semibold">
+                <a href={`/undervisning/${e.slug}`} class="no-underline hover:underline">
+                  {e.data.title}
+                </a>
+              </h3>
+              {e.data.description && (
+                <p class="text-sm text-ink-muted dark:text-paper/80 mt-1">
+                  {e.data.description}
+                </p>
+              )}
+            </li>
+          ))}
+        </ul>
+      )}
+    </section>
   </div>
 </BaseLayout>

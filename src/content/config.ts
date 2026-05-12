@@ -16,11 +16,14 @@ const undervisning = defineCollection({
   type: "content",
   schema: z.object({
     title: z.string(),
-    description: z.string(),
+    description: z.string().optional(),
     kind: z.enum(["emne", "studentoppgave", "ressurs"]),
     nivå: z.enum(["bachelor", "master", "phd", "annet"]).optional(),
     pubDate: z.coerce.date(),
     status: z.enum(["åpen", "tatt", "fullført"]).optional(),
+    student: z.array(z.string()).optional(),
+    år: z.number().optional(),
+    url: z.string().url().optional(),
     tags: z.array(z.string()).default([]),
   }),
 });

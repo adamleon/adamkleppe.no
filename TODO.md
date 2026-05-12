@@ -53,10 +53,12 @@ Søk i koden etter `TODO:` eller `PLACEHOLDER` for å finne alt. Her er hovedlis
 
 ### `/undervisning`
 
-- [ ] Erstatt eksempeloppgaven `src/content/undervisning/master-sim-to-real.md`
-  med ekte tekst, eller fjern den.
-- [ ] Legg til emner du underviser i (`kind: emne`).
+- [ ] Slett `src/content/undervisning/emne-placeholder.md` når du har lagt
+  inn et ekte emne.
+- [ ] Legg til emner du underviser i (`kind: emne`) med beskrivelse og lenker.
 - [ ] Legg til pedagogiske ressurser (`kind: ressurs`).
+- [ ] Kjør `npm run nytt-oppgave -- <ntnu-open-url>` for hver veiledede
+  studentoppgave du vil ha listet.
 
 ### `/formidling`
 

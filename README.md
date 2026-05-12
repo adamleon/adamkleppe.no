@@ -94,11 +94,28 @@ url: "https://..."
 Sammendrag.
 ```
 
-### Ny studentoppgave eller emne
+### Nytt emne eller ressurs
 
-`src/content/undervisning/<slug>.md` med `kind: emne | studentoppgave | ressurs`.
-Studentoppgaver havner i RSS-feeden `/rss-undervisning.xml` slik at studenter
-kan abonnere.
+`src/content/undervisning/<slug>.md` med `kind: emne` eller `kind: ressurs`.
+Disse får hver sin side på `/undervisning/<slug>/`.
+
+### Ny veiledet studentoppgave (fra NTNU Open)
+
+Bruk det innebygde scriptet — det fetcher metadata fra DSpace-meta-taggene
+og skriver Markdown-filen for deg:
+
+```bash
+npm run nytt-oppgave -- https://hdl.handle.net/11250/3088123
+```
+
+Scriptet leser ut tittel, forfattere, publiseringsdato og nivå (master /
+bachelor / phd) fra `citation_*`- og `DC.*`-meta-tags og lager en
+`.md`-fil under `src/content/undervisning/`. Hvis noe felt mangler, ser
+du det i loggen — bare åpne filen og rett opp manuelt.
+
+Veiledede oppgaver vises i listen på `/undervisning`, men har **ingen
+egen side på siden**: tittelen lenker direkte til NTNU Open. De havner
+også i RSS-feeden `/rss-undervisning.xml` med ekstern lenke.
 
 ## Designprinsipper
 
