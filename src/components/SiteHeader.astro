@@ -1,0 +1,42 @@
+---
+const nav = [
+  { href: "/om", label: "Om" },
+  { href: "/forskning", label: "Forskning" },
+  { href: "/publikasjoner", label: "Publikasjoner" },
+  { href: "/boka", label: "Boka" },
+  { href: "/undervisning", label: "Undervisning" },
+  { href: "/formidling", label: "Formidling" },
+  { href: "/skriv", label: "Skriv" },
+];
+
+const path = Astro.url.pathname.replace(/\/$/, "") || "/";
+---
+
+<header class="border-b border-ink/10 dark:border-paper/10">
+  <div class="mx-auto max-w-5xl px-5 py-5 flex flex-wrap items-baseline justify-between gap-4">
+    <a href="/" class="no-underline font-serif text-xl font-bold tracking-tight">
+      Adam Leon Kleppe
+    </a>
+    <nav aria-label="Hovedmeny">
+      <ul class="flex flex-wrap gap-x-5 gap-y-2 text-sm">
+        {nav.map((item) => {
+          const active = path === item.href || path.startsWith(item.href + "/");
+          return (
+            <li>
+              <a
+                href={item.href}
+                class:list={[
+                  "no-underline hover:underline",
+                  active ? "font-semibold text-accent dark:text-accent-dark" : "",
+                ]}
+                aria-current={active ? "page" : undefined}
+              >
+                {item.label}
+              </a>
+            </li>
+          );
+        })}
+      </ul>
+    </nav>
+  </div>
+</header>

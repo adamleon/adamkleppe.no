@@ -1,0 +1,28 @@
+---
+const year = new Date().getFullYear();
+---
+
+<footer class="border-t border-ink/10 dark:border-paper/10 mt-24">
+  <div class="mx-auto max-w-5xl px-5 py-10 text-sm flex flex-col gap-4 sm:flex-row sm:justify-between">
+    <div>
+      <p class="font-serif font-semibold">Adam Leon Kleppe</p>
+      <p class="text-ink-muted dark:text-paper/70">
+        Førsteamanuensis, NTNU Ålesund
+      </p>
+    </div>
+    <div class="flex flex-col gap-1">
+      <p>
+        E-post: <span class="font-mono">TODO: e-post</span>
+        <!-- TODO: Sett inn e-postadresse i klartekst. -->
+      </p>
+      <p>
+        <a href="/rss-skriv.xml">RSS · skriv</a>
+        <span aria-hidden="true"> · </span>
+        <a href="/rss-undervisning.xml">RSS · undervisning</a>
+      </p>
+      <p class="text-ink-muted dark:text-paper/60">
+        © {year} Adam Leon Kleppe
+      </p>
+    </div>
+  </div>
+</footer>

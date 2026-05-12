@@ -1,0 +1,23 @@
+---
+interface Props {
+  title: string;
+  forfattere: string[];
+  år: number;
+  publisert_i?: string;
+  doi?: string;
+  url?: string;
+}
+const { title, forfattere, år, publisert_i, doi, url } = Astro.props;
+
+const link = url ?? (doi ? `https://doi.org/${doi}` : undefined);
+---
+
+<li class="py-3 border-b border-ink/10 dark:border-paper/10 last:border-b-0">
+  <p class="font-medium">
+    {link ? <a href={link}>{title}</a> : title}
+  </p>
+  <p class="text-sm text-ink-muted dark:text-paper/70">
+    {forfattere.join(", ")} · {år}
+    {publisert_i && <> · <em>{publisert_i}</em></>}
+  </p>
+</li>

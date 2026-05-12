@@ -1,0 +1,40 @@
+---
+import "../styles/global.css";
+import SiteHeader from "../components/SiteHeader.astro";
+import SiteFooter from "../components/SiteFooter.astro";
+import SeoMeta from "../components/SeoMeta.astro";
+
+interface Props {
+  title: string;
+  description: string;
+  ogImage?: string;
+  ogType?: "website" | "article";
+}
+
+const { title, description, ogImage, ogType } = Astro.props;
+const fullTitle = title === "Adam Leon Kleppe"
+  ? title
+  : `${title} — Adam Leon Kleppe`;
+---
+
+<!doctype html>
+<html lang="nb">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <link rel="alternate" type="application/rss+xml" title="Skriv — Adam Leon Kleppe" href="/rss-skriv.xml" />
+    <link rel="alternate" type="application/rss+xml" title="Undervisning — Adam Leon Kleppe" href="/rss-undervisning.xml" />
+    <SeoMeta title={fullTitle} description={description} image={ogImage} type={ogType} />
+    <meta name="generator" content={Astro.generator} />
+  </head>
+  <body class="min-h-screen flex flex-col">
+    <SiteHeader />
+    <main id="main" class="flex-1">
+      <slot />
+    </main>
+    <SiteFooter />
+  </body>
+</html>

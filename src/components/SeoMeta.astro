@@ -1,0 +1,34 @@
+---
+interface Props {
+  title: string;
+  description: string;
+  image?: string;
+  type?: "website" | "article";
+}
+
+const {
+  title,
+  description,
+  image = "/og-default.svg",
+  type = "website",
+} = Astro.props;
+
+const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url).toString();
+const imageUrl = new URL(image, Astro.site ?? Astro.url).toString();
+---
+
+<link rel="canonical" href={canonical} />
+<meta name="description" content={description} />
+
+<meta property="og:type" content={type} />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:url" content={canonical} />
+<meta property="og:image" content={imageUrl} />
+<meta property="og:locale" content="nb_NO" />
+<meta property="og:site_name" content="adamkleppe.no" />
+
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={title} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={imageUrl} />
