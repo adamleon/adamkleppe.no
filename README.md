@@ -130,6 +130,24 @@ Veiledede oppgaver vises i listen på `/undervisning`, men har **ingen
 egen side på siden**: tittelen lenker direkte til kildelenken. De havner
 også i RSS-feeden `/rss-undervisning.xml` med ekstern lenke.
 
+### Bulk-import: alle dine veiledede oppgaver fra NVA
+
+I stedet for å kjøre `nytt-oppgave` én og én, hent alle på én gang:
+
+```bash
+npm run hent-oppgaver
+# eller med annet navn:
+npm run hent-oppgaver -- "Annet Navn"
+```
+
+Scriptet kaller NVA-søke-API-et med `contributor_name=<navn>` og filtrerer
+på `DegreeMaster`, `DegreeMasterTwoYear` og `DegreeBachelor`. For hvert
+treff skrives én Markdown-fil til `src/content/undervisning/`. Eksisterende
+filer **overskrives ikke** — kjør så ofte du vil, det blir bare hentet
+nye poster siden sist.
+
+Standardnavnet er `"Adam Leon Kleppe"` (hardkodet i `scripts/hent-oppgaver.mjs`).
+
 ## Designprinsipper
 
 - Tekst-først, rask. Ingen blokkerende JS, ingen 3D, ingen tunge animasjoner.

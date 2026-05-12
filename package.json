@@ -9,7 +9,8 @@
     "build": "astro check && astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "nytt-oppgave": "node scripts/nytt-oppgave.mjs"
+    "nytt-oppgave": "node scripts/nytt-oppgave.mjs",
+    "hent-oppgaver": "node scripts/hent-oppgaver.mjs"
   },
   "dependencies": {
     "astro": "^5.14.0",
