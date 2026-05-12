@@ -26,3 +26,4 @@ pnpm-debug.log*
 
 # astro
 .astro/
+src/env.d.ts
