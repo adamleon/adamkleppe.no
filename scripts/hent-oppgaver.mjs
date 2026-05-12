@@ -38,7 +38,7 @@ while (true) {
     category: "DegreeMaster,DegreeMasterTwoYear,DegreeBachelor",
     size: String(PAGE_SIZE),
     from: String(from),
-    sort: "publicationDate.year:desc",
+    sort: "publication_date:desc",
   });
   const url = `${API_BASE}?${params}`;
 
