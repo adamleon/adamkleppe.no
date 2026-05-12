@@ -99,22 +99,35 @@ Sammendrag.
 `src/content/undervisning/<slug>.md` med `kind: emne` eller `kind: ressurs`.
 Disse får hver sin side på `/undervisning/<slug>/`.
 
-### Ny veiledet studentoppgave (fra NTNU Open)
+### Ny veiledet studentoppgave (fra NVA eller NTNU Open)
 
-Bruk det innebygde scriptet — det fetcher metadata fra DSpace-meta-taggene
-og skriver Markdown-filen for deg:
+Bruk det innebygde scriptet — det fetcher metadata og skriver
+Markdown-filen for deg. Støtter både NVA (Sikt) og eldre NTNU Open-poster:
 
 ```bash
+# NVA (Sikt) — kaller https://api.nva.unit.no/search/resources
+npm run nytt-oppgave -- https://nva.sikt.no/registration/<id>
+
+# NTNU Open / DSpace — skraper meta-tags fra HTML
 npm run nytt-oppgave -- https://hdl.handle.net/11250/3088123
 ```
 
-Scriptet leser ut tittel, forfattere, publiseringsdato og nivå (master /
-bachelor / phd) fra `citation_*`- og `DC.*`-meta-tags og lager en
-`.md`-fil under `src/content/undervisning/`. Hvis noe felt mangler, ser
-du det i loggen — bare åpne filen og rett opp manuelt.
+For NVA henter scriptet `entityDescription.mainTitle`, kontributørnavn,
+publiseringsdato og publikasjonstype (`DegreeMaster` → master,
+`DegreeBachelor` → bachelor, `DegreePhd` → phd, osv.) via det offentlige
+søke-API-et. Ingen autentisering nødvendig så lenge oppgaven er publisert.
+
+For NTNU Open-poster som fortsatt ligger i gamle DSpace, leser scriptet
+`citation_*` og `DC.*` meta-tags fra HTML-en. Hvis du får
+"Fant ikke tittel" på en slik URL, har den sannsynligvis blitt migrert til
+NVA — sjekk om hdl-lenken redirecter til `nva.sikt.no/registration/...`,
+og bruk i så fall NVA-URL-en i stedet.
+
+Hvis et felt mangler eller virker feil, åpne `.md`-fila og rett opp
+manuelt — det er bare YAML.
 
 Veiledede oppgaver vises i listen på `/undervisning`, men har **ingen
-egen side på siden**: tittelen lenker direkte til NTNU Open. De havner
+egen side på siden**: tittelen lenker direkte til kildelenken. De havner
 også i RSS-feeden `/rss-undervisning.xml` med ekstern lenke.
 
 ## Designprinsipper
