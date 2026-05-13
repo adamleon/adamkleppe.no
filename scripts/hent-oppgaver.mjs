@@ -15,21 +15,31 @@ import path from "node:path";
 import process from "node:process";
 
 const DEFAULT_NAME = "Adam Leon Kleppe";
+const YEAR_FROM = 2022;
 const navn = process.argv[2] || DEFAULT_NAME;
 const PAGE_SIZE = 100;
 const API_BASE = "https://api.nva.unit.no/search/resources";
+
+const SUPERVISOR_ROLES = new Set([
+  "Supervisor",
+  "Advisor",
+  "AcademicCoordinator",
+]);
 
 const contentDir = path.join(process.cwd(), "src", "content", "undervisning");
 if (!existsSync(contentDir)) mkdirSync(contentDir, { recursive: true });
 
 console.log(
-  `Søker NVA etter master/bachelor-oppgaver med kontributør "${navn}" ...\n`,
+  `Søker NVA etter master/bachelor-oppgaver med kontributør "${navn}" ` +
+    `fra ${YEAR_FROM} og nyere ...\n`,
 );
 
 let from = 0;
 let totalHits;
 let written = 0;
 let skipped = 0;
+let droppedYear = 0;
+let droppedSelf = 0;
 let warnings = 0;
 
 while (true) {
@@ -74,6 +84,8 @@ while (true) {
     const result = writeHit(hit);
     if (result === "written") written++;
     else if (result === "skipped") skipped++;
+    else if (result === "dropped-year") droppedYear++;
+    else if (result === "dropped-self") droppedSelf++;
     else if (result === "warning") warnings++;
   }
 
@@ -83,13 +95,13 @@ while (true) {
 }
 
 console.log("");
-console.log(
-  `Sammendrag: ${written} ny${written === 1 ? "" : "e"} skrevet, ` +
-    `${skipped} hoppet over.`,
-);
-if (warnings) {
-  console.log(`${warnings} advarsler — sjekk loggen over.`);
-}
+console.log(`Sammendrag:`);
+console.log(`  ${written} ny${written === 1 ? "" : "e"} skrevet`);
+console.log(`  ${skipped} hoppet over (fanns fra før)`);
+if (droppedYear) console.log(`  ${droppedYear} eldre enn ${YEAR_FROM}`);
+if (droppedSelf)
+  console.log(`  ${droppedSelf} hvor du står som forfatter (egen oppgave)`);
+if (warnings) console.log(`  ${warnings} advarsler — sjekk loggen over`);
 
 function writeHit(hit) {
   const ed = hit.entityDescription ?? {};
@@ -101,15 +113,33 @@ function writeHit(hit) {
     return "warning";
   }
 
-  const authors = (ed.contributors ?? [])
-    .map((c) => c.identity?.name)
-    .filter(Boolean);
+  const allContributors = ed.contributors ?? [];
 
   const dateObj = ed.publicationDate ?? {};
   const year = dateObj.year ? Number(dateObj.year) : new Date().getFullYear();
   const month = (dateObj.month ?? "01").toString().padStart(2, "0");
   const day = (dateObj.day ?? "01").toString().padStart(2, "0");
   const isoDate = `${year}-${month}-${day}`;
+
+  if (year < YEAR_FROM) {
+    console.log(`  - dropper (${year} < ${YEAR_FROM}): ${title}`);
+    return "dropped-year";
+  }
+
+  const selfContributor = allContributors.find((c) =>
+    isSearchedName(c.identity?.name, navn),
+  );
+  const selfRole = selfContributor?.role?.type;
+  if (selfRole === "Creator") {
+    console.log(`  - dropper (egen oppgave, ${year}): ${title}`);
+    return "dropped-self";
+  }
+
+  const authors = allContributors
+    .filter((c) => !SUPERVISOR_ROLES.has(c.role?.type))
+    .filter((c) => !isSearchedName(c.identity?.name, navn))
+    .map((c) => c.identity?.name)
+    .filter(Boolean);
 
   const type = ed.reference?.publicationInstance?.type ?? "";
   const nivå = mapType(type);
@@ -149,6 +179,23 @@ function writeHit(hit) {
   writeFileSync(filePath, lines.join("\n") + "\n");
   console.log(`  ✓ skrev:        ${slug} (${year}${nivå ? `, ${nivå}` : ""})`);
   return "written";
+}
+
+function isSearchedName(candidate, searched) {
+  if (!candidate || !searched) return false;
+  const norm = (s) =>
+    s
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[̀-ͯ]/g, "")
+      .replace(/[^a-z0-9]+/g, " ")
+      .trim()
+      .split(/\s+/)
+      .filter(Boolean);
+  const candTokens = new Set(norm(candidate));
+  const searchTokens = norm(searched);
+  if (searchTokens.length === 0) return false;
+  return searchTokens.every((t) => candTokens.has(t));
 }
 
 function mapType(type) {
