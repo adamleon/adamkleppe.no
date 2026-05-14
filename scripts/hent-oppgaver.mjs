@@ -46,6 +46,7 @@ while (true) {
   const params = new URLSearchParams({
     contributor_name: navn,
     category: "DegreeMaster,DegreeMasterTwoYear,DegreeBachelor",
+    status: "PUBLISHED",
     size: String(PAGE_SIZE),
     from: String(from),
     sort: "publication_date:desc",
