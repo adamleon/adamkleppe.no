@@ -81,6 +81,7 @@ let totalHits;
 let written = 0;
 let skipped = 0;
 let droppedRole = 0;
+let droppedSnl = 0;
 let warnings = 0;
 
 while (true) {
@@ -127,6 +128,7 @@ while (true) {
     if (result === "written") written++;
     else if (result === "skipped") skipped++;
     else if (result === "dropped-role") droppedRole++;
+    else if (result === "dropped-snl") droppedSnl++;
     else if (result === "warning") warnings++;
   }
 
@@ -141,6 +143,8 @@ console.log(`  ${written} ny${written === 1 ? "" : "e"} skrevet`);
 console.log(`  ${skipped} hoppet over (fanns fra før)`);
 if (droppedRole)
   console.log(`  ${droppedRole} hvor du kun har veileder-/redaktørrolle`);
+if (droppedSnl)
+  console.log(`  ${droppedSnl} SNL-artikler (hører hjemme i /formidling)`);
 if (warnings) console.log(`  ${warnings} advarsler — sjekk loggen over`);
 
 function writeHit(hit) {
@@ -162,6 +166,11 @@ function writeHit(hit) {
   if (selfRole && SUPERVISOR_ROLES.has(selfRole)) {
     console.log(`  - dropper (kun veileder, ikke forfatter): ${title}`);
     return "dropped-role";
+  }
+
+  if (isSnlPublication(ed)) {
+    console.log(`  - dropper (SNL-artikkel): ${title}`);
+    return "dropped-snl";
   }
 
   const forfattere = allContributors
@@ -224,6 +233,28 @@ function writeHit(hit) {
   writeFileSync(filePath, lines.join("\n") + "\n");
   console.log(`  ✓ skrev:        ${slug} (${type})`);
   return "written";
+}
+
+function isSnlPublication(entityDescription) {
+  const ref = entityDescription?.reference ?? {};
+  const ctx = ref.publicationContext ?? {};
+
+  const candidates = [
+    ctx.title,
+    ctx.name,
+    ctx.publisher?.name,
+    ctx.publisher?.title,
+    ctx.entityDescription?.mainTitle,
+    ctx.series?.title,
+    ctx.series?.name,
+  ].filter(Boolean);
+
+  const haystack = candidates.join(" | ").toLowerCase();
+  return (
+    haystack.includes("store norske leksikon") ||
+    /\bsnl\b/.test(haystack) ||
+    haystack.includes("snl.no")
+  );
 }
 
 function mapType(instanceType) {
