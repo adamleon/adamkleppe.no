@@ -9,7 +9,7 @@ draft: false
 <!-- PLACEHOLDER: Erstatt med et reelt første innlegg. -->
 
 Dette er et plassholderinnlegg. Her kommer essays om sim-to-real, geometrisk
-algebra, undervisningsdesign, og notater fra arbeidet med Den Rødrutede
+algebra, undervisningsdesign, og notater fra arbeidet med Den Rødrutete
 Robotboken.
 
 TODO: Skriv ekte førsteinnlegg.

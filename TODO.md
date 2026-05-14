@@ -9,10 +9,6 @@ Søk i koden etter `TODO:` eller `PLACEHOLDER` for å finne alt. Her er hovedlis
 
 ### Globalt
 
-- [ ] E-postadresse i klartekst — to steder:
-  - `src/components/SiteFooter.astro`
-  - `src/pages/index.astro` (kontakt-seksjon)
-  - `src/pages/om.astro` (kontakt-seksjon)
 - [ ] Portrettbilde til forsiden — legg fil i `public/portrett.jpg` og bytt
   ut plassholderboksen i `src/pages/index.astro`.
 - [ ] Ekte OpenGraph-bilde — `public/og-default.svg` er en autogenerert SVG.
@@ -47,10 +43,11 @@ Søk i koden etter `TODO:` eller `PLACEHOLDER` for å finne alt. Her er hovedlis
 
 ### `/boka`
 
-- [ ] Fyll ut pitch (2–3 avsnitt).
-- [ ] Argumenter for norsk fagspråk.
-- [ ] Innholdsplan / kapittel-liste.
-- [ ] Statusbeskrivelse.
+- [ ] Last opp `prosjektbeskrivelse.pdf`, `innholdsfortegnelse.pdf` og
+  `provekapittel.pdf` til `public/boka/` (fjern TODO-merkene i `boka.astro`
+  når filene er på plass).
+- [ ] Vurder om "Status"-seksjon trengs (hvor langt i arbeidet, planlagt
+  utgiver) — original-siden hadde det ikke, men det kan være nyttig.
 
 ### `/undervisning`
 
