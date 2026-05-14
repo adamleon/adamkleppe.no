@@ -33,7 +33,13 @@ const alle = (await getCollection("formidling")).sort(
             <div class="flex flex-wrap items-baseline justify-between gap-2">
               <h2 class="text-lg font-semibold">
                 {f.data.url ? (
-                  <a href={f.data.url}>{f.data.title}</a>
+                  <a
+                    href={f.data.url}
+                    target="_blank"
+                    rel="noopener noreferrer external"
+                  >
+                    {f.data.title}
+                  </a>
                 ) : (
                   f.data.title
                 )}
