@@ -78,7 +78,27 @@ Tekst her. Markdown og MDX støttes.
 
 ### Ny publikasjon
 
-Legg en fil i `src/content/publikasjoner/<slug>.md`:
+**Anbefalt — bulk-import alle dine publikasjoner fra NVA:**
+
+```bash
+npm run hent-publikasjoner
+# eller med annet navn:
+npm run hent-publikasjoner -- "Annet Navn"
+```
+
+Henter artikler (Journal/Academic/Scientific/Popular), konferansebidrag,
+bøker og bokkapitler fra NVA-API-et og skriver én Markdown-fil per
+publikasjon til `src/content/publikasjoner/`. Mapper NVA-typene til
+de fire kategoriene i schemaet (`artikkel`, `konferanse`, `bok`,
+`bokkapittel`). Henter også DOI, tidsskrift/bok-tittel, og sammendrag
+hvor det finnes.
+
+Filtrerer bort publikasjoner hvor du kun står som veileder/Supervisor —
+de hører hjemme på `/undervisning` via `hent-oppgaver` i stedet.
+
+Eksisterende filer overskrives ikke. Kjør så ofte du vil.
+
+**Manuelt — legg en fil i `src/content/publikasjoner/<slug>.md`:**
 
 ```markdown
 ---

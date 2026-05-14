@@ -10,7 +10,8 @@
     "preview": "astro preview",
     "astro": "astro",
     "nytt-oppgave": "node scripts/nytt-oppgave.mjs",
-    "hent-oppgaver": "node scripts/hent-oppgaver.mjs"
+    "hent-oppgaver": "node scripts/hent-oppgaver.mjs",
+    "hent-publikasjoner": "node scripts/hent-publikasjoner.mjs"
   },
   "dependencies": {
     "astro": "^5.14.0",

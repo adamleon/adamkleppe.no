@@ -41,8 +41,9 @@ Søk i koden etter `TODO:` eller `PLACEHOLDER` for å finne alt. Her er hovedlis
 ### `/publikasjoner`
 
 - [ ] Fjern `src/content/publikasjoner/placeholder.md`.
-- [ ] Legg inn alle reelle publikasjoner manuelt. (Se v2-plan under for
-  NVA-API-integrasjon.)
+- [ ] Kjør `npm run hent-publikasjoner` for å bulk-importere fra NVA.
+- [ ] Gå gjennom de genererte filene og rett opp manuelt der scriptet
+  bommet (f.eks. type-feilklassifiseringer, manglende DOI).
 
 ### `/boka`
 
